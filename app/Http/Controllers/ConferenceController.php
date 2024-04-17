@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Conference;
 use Illuminate\Http\Request;
+use App\Http\Requests\CreateConferenceRequest;
+use App\Http\Requests\UpdateConferenceRequest;
 
 class ConferenceController extends Controller
 {
@@ -18,17 +20,10 @@ class ConferenceController extends Controller
         return view('conferences.create');
     }
 
-    public function store(Request $request)
+    public function store(CreateConferenceRequest $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'date' => 'required|date',
-            'address' => 'required'
-        ]);
-
-        Conference::create($request->all());
-        return redirect()->route('conferences.index');
+        Conference::create($request->validated());
+        return redirect()->route('conferences.index')->with('success', 'Conference created successfully.');
     }
 
     public function show(Conference $conference)
@@ -41,22 +36,15 @@ class ConferenceController extends Controller
         return view('conferences.edit', compact('conference'));
     }
 
-    public function update(Request $request, Conference $conference)
+    public function update(UpdateConferenceRequest $request, Conference $conference)
     {
-        $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'date' => 'required|date',
-            'address' => 'required'
-        ]);
-
-        $conference->update($request->all());
-        return redirect()->route('conferences.index');
+        $conference->update($request->validated());
+        return redirect()->route('conferences.index')->with('success', 'Conference updated successfully.');
     }
 
     public function destroy(Conference $conference)
     {
         $conference->delete();
-        return redirect()->route('conferences.index');
+        return redirect()->route('conferences.index')->with('success', 'Conference deleted successfully.');
     }
 }
